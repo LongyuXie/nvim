@@ -78,7 +78,7 @@ local native_map = {
     ["n|<leader>p"] = map_cmd([["+p]]):with_noremap(),
     ["v|<leader>y"] = map_cmd([["+y]]):with_noremap(),
     ["n|<leader>a"] = map_cmd([[ggVG]]):with_noremap(),
-    ["n|<C-a>"] = map_cmd([[ggVG]]):with_noremap(),
+    -- ["n|<C-a>"] = map_cmd([[ggVG]]):with_noremap(),
 
     -- move when insert 
     ["i|<C-f>"] = map_cmd("<right>"):with_silent():with_noremap(),
@@ -87,15 +87,13 @@ local native_map = {
     ["v|>"] = map_cmd(">gv"):with_silent():with_noremap():with_nowait(),
     ["v|<"] = map_cmd("<gv"):with_silent():with_noremap():with_nowait(),
 
-    ["n|<leader>k"] = map_cu("move -2"):with_silent():with_noremap():with_nowait(),
-    ["n|<leader>j"] = map_cu("move +1"):with_silent():with_noremap():with_nowait(),
+    ["n|<C-k>"] = map_cu("move -2"):with_silent():with_noremap():with_nowait(),
+    ["n|<C-j>"] = map_cu("move +1"):with_silent():with_noremap():with_nowait(),
     ["n|<C-l>"] = map_cu(">"):with_silent():with_noremap():with_nowait(),
     ["n|<C-h>"] = map_cu("<"):with_silent():with_noremap():with_nowait(),
 
 
-    ["i|<C-t><C-t>"] = map_cmd([[<C-r>=strftime("%Y-%m-%d")]]):with_silent():with_noremap():with_nowait(),
-
-
+    ["i|<C-t><f-t>"] = map_cmd([[<C-r>=strftime("%Y-%m-%d")<CR>]]):with_silent():with_noremap():with_nowait(),
 
 
     -- ["n|<leader>o"] = map_cmd("o<ESC>k"):with_silent():with_noremap():with_nowait(),

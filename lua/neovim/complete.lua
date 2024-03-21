@@ -38,45 +38,53 @@ cmp.setup({
             select = true
         }) -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
         ,["<Tab>"] = cmp.mapping(
-            function(fallback)
-              cmp_ultisnips_mappings.expand_or_jump_forwards(fallback)
-            end,
-            { "i", "s", --[[ "c" (to enable the mapping in command mode) ]] }
-          ),
-          ["<S-Tab>"] = cmp.mapping(
-            function(fallback)
-              cmp_ultisnips_mappings.jump_backwards(fallback)
-            end,
-            { "i", "s", --[[ "c" (to enable the mapping in command mode) ]] }
-          ),
-    }),
-    sources = cmp.config.sources({{
-        name = 'nvim_lsp',
-        entry_filter = function(entry)
-            return require("cmp").lsp.CompletionItemKind.Snippet ~= entry:get_kind()
+        function(fallback)
+            cmp_ultisnips_mappings.expand_or_jump_forwards(fallback)
         end,
-    }, -- { name = 'vsnip' }, -- For vsnip users.
-    -- { name = 'luasnip' }, -- For luasnip users.
-    { name = 'ultisnips' }, -- For ultisnips users.
-    -- { name = 'snippy' }, -- For snippy users.
-    }, {{
-        name = 'buffer'
-    }}),
+        { "i", "s", --[[ "c" (to enable the mapping in command mode) ]] }
+        ),
+        ["<S-Tab>"] = cmp.mapping(
+        function(fallback)
+            cmp_ultisnips_mappings.jump_backwards(fallback)
+        end,
+        { "i", "s", --[[ "c" (to enable the mapping in command mode) ]] }
+        ),
+    }),
+    sources = cmp.config.sources(
+    {
+        {
+            name = 'nvim_lsp',
+            entry_filter = function(entry)
+                return require("cmp").lsp.CompletionItemKind.Snippet ~= entry:get_kind()
+            end,
+        }, 
+        -- { name = 'vsnip' }, -- For vsnip users.
+        -- { name = 'luasnip' }, -- For luasnip users.
+        { name = 'ultisnips' }, -- For ultisnips users.
+        -- { name = 'snippy' }, -- For snippy users.
+    }, 
+    {
+        { name = 'buffer' }
+    },
+    {
+        { name = 'orgmode' }
+    }
+    ),
     formatting = {
         format = function(entry, vim_item)
-          local label = vim_item.abbr
-          local truncated_label = vim.fn.strcharpart(label, 0, MAX_LABEL_WIDTH)
-          if truncated_label ~= label then
-            vim_item.abbr = truncated_label .. ELLIPSIS_CHAR
-          elseif string.len(label) < MIN_LABEL_WIDTH then
-            local padding = string.rep(' ', MIN_LABEL_WIDTH - string.len(label))
-            vim_item.abbr = label .. padding
-          end
-          vim_item.menu = ""
-        --   vim_item.kind = ""
-          return vim_item
+            local label = vim_item.abbr
+            local truncated_label = vim.fn.strcharpart(label, 0, MAX_LABEL_WIDTH)
+            if truncated_label ~= label then
+                vim_item.abbr = truncated_label .. ELLIPSIS_CHAR
+            elseif string.len(label) < MIN_LABEL_WIDTH then
+                local padding = string.rep(' ', MIN_LABEL_WIDTH - string.len(label))
+                vim_item.abbr = label .. padding
+            end
+            vim_item.menu = ""
+            --   vim_item.kind = ""
+            return vim_item
         end,
-      },
+    },
 })
 
 
@@ -93,6 +101,6 @@ require('lspconfig')['clangd'].setup {
 
 local cmp_autopairs = require('nvim-autopairs.completion.cmp')
 cmp.event:on(
-  'confirm_done',
-  cmp_autopairs.on_confirm_done()
+    'confirm_done',
+    cmp_autopairs.on_confirm_done()
 )
