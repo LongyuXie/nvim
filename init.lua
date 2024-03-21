@@ -19,6 +19,4 @@ if vim.g.vscode then
 else
     require("neovim")
     require("common.options").load_all()
-    -- require("common.options").load_all()
-
 end
