@@ -19,15 +19,15 @@ local map = vim.keymap
 --     end
 -- end
 
--- local function add_new_line()
---     local pos = vim.api.nvim_win_get_cursor(0)
---     local line = pos[1]
---     vim.api.nvim_buf_set_lines(
---         0, line, line, true, {""}
---     )
--- end
+local function add_new_line()
+    local pos = vim.api.nvim_win_get_cursor(0)
+    local line = pos[1]
+    vim.api.nvim_buf_set_lines(
+        0, line, line, true, {""}
+    )
+end
 
--- vim.keymap.set("n", "<leader>o", function() add_new_line() end, {noremap = true})
+vim.keymap.set("n", "<leader>j", add_new_line, {noremap = true})
 
 -- vim.api.nvim_create_user_command(
 --     'NvimTreeOpenDir',

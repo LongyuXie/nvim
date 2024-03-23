@@ -1,4 +1,3 @@
-
 -- place this in one of your configuration file(s)
 local hop = require('hop')
 local directions = require('hop.hint').HintDirection
@@ -12,7 +11,6 @@ end)
 local cmp = require('cmp')
 local cmp_ultisnips_mappings = require("cmp_nvim_ultisnips.mappings")
 -- local lspkind = require('lspkind')
-
 local ELLIPSIS_CHAR = '...'
 local MAX_LABEL_WIDTH = 30
 local MIN_LABEL_WIDTH = 30
@@ -88,6 +86,7 @@ cmp.setup({
 })
 
 
+require('java').setup()
 local lspconfig = require('lspconfig')
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
@@ -95,9 +94,16 @@ require('lspconfig')['clangd'].setup {
     capabilities = capabilities,
     cmd = {'clangd', '--header-insertion-decorators=false'}    
 }
--- require('lspconfig')['jdtls'].setup {
---     capabilities = capabilities,
--- }
+
+
+require('lspconfig')['jdtls'].setup {
+    capabilities = capabilities,
+    handlers = {
+        -- By assigning an empty function, you can remove the notifications
+        -- printed to the cmd
+        ["$/progress"] = function(_, result, ctx) end,
+    },
+}
 
 local cmp_autopairs = require('nvim-autopairs.completion.cmp')
 cmp.event:on(
