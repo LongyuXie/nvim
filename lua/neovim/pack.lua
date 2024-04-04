@@ -100,7 +100,7 @@ require("lazy").setup({
 			"hrsh7th/cmp-nvim-lsp",
 			"SirVer/ultisnips",
 			"quangnguyen30192/cmp-nvim-ultisnips",
-			"honza/vim-snippets",
+			-- "honza/vim-snippets",
 		},
 	},
 	{
@@ -122,6 +122,12 @@ require("lazy").setup({
 				translator = true, ---@type boolean
 				translate_problems = true, ---@type boolean
 			},
+            lang = 'java',
+            ---@type lc.storage
+            storage = {
+                home = vim.fn.stdpath("data") .. "/leetcode",
+                cache = vim.fn.stdpath("cache") .. "/leetcode",
+            },
 		},
 	},
 	{
@@ -170,6 +176,18 @@ require("lazy").setup({
 		end,
 	},
 	{ "mhartington/formatter.nvim" },
+    {
+        "NeogitOrg/neogit",
+        dependencies = {
+            "nvim-lua/plenary.nvim",         -- required
+            "sindrets/diffview.nvim",        -- optional - Diff integration
+
+            -- Only one of these is needed, not both.
+            "nvim-telescope/telescope.nvim", -- optional
+            -- "ibhagwan/fzf-lua",              -- optional
+        },
+        config = true
+    },
 })
 
 -- Utilities for creating configurations
@@ -221,6 +239,7 @@ require("formatter").setup({
 			require("formatter.filetypes.any").remove_trailing_whitespace,
 		},
 	},
+    
 })
 
 -- Load treesitter grammar for org
@@ -233,7 +252,6 @@ require('orgmode').setup({
         org = {
             org_toggle_checkbox = "<leader>ck"
         },
-
     }
 })
 
