@@ -15,6 +15,12 @@ local ELLIPSIS_CHAR = '...'
 local MAX_LABEL_WIDTH = 30
 local MIN_LABEL_WIDTH = 30
 
+-- 注意参数需要使用引号包裹, 不然会识别成变量
+local _set_snippets = 'let g:UltiSnipsSnippetDirectories=' .. '["' .. vim.fn.stdpath("config") .. "/UltiSnips" .. '"]'
+
+vim.cmd(
+_set_snippets
+)
 
 cmp.setup({
     snippet = {

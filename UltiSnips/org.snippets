@@ -1,0 +1,38 @@
+snippet 'h(\d)' "headline" br
+`!p snip.rv="*" * int(match.group(1))` ${1:headline}
+endsnippet
+
+snippet code "add code block" b
+#+begin_src ${1:java}
+${1:code}
+#+end_src
+endsnippet
+
+snippet title "title info" b
+#+TITLE:     ${1:`!p snip.rv=snip.fn.rsplit('.', 1)[0]`}
+#+AUTHOR:    ${2:谢龙玉}
+#+EMAIL:     ${3:1308963950@qq.com}
+#+DATE:		 ${4:[`!v strftime("%Y-%m-%d %a")`]}
+endsnippet
+
+snippet ic "inline code" w
+=${1:code}=$0 
+endsnippet
+
+snippet xc "latex code" w
+\(${1:tex}\)$0
+endsnippet
+
+snippet quote "quote block" b
+#+BEGIN_QUOTE
+$1
+#+END_QUOTE
+$0
+endsnippet
+
+snippet begin "begin block" b
+#+BEGIN_${1}
+${2:content}
+#+END_${1}
+$0
+endsnippet
