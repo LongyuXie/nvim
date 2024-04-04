@@ -72,6 +72,9 @@ cmp.setup({
     },
     {
         { name = 'orgmode' }
+    },
+    {
+        { name = 'vimtex' }
     }
     ),
     formatting = {

@@ -188,6 +188,16 @@ require("lazy").setup({
         },
         config = true
     },
+    {
+        "lervag/vimtex",
+        init = function()
+            -- Use init for configuration, don't use the more common "config".
+        end
+    },
+    {
+        "micangl/cmp-vimtex",
+    }
+
 })
 
 -- Utilities for creating configurations
