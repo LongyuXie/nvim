@@ -2,9 +2,9 @@ snippet 'h(\d)' "headline" br
 `!p snip.rv="*" * int(match.group(1))` ${1:headline}
 endsnippet
 
-snippet code "add code block" b
-#+begin_src ${1:java}
-${1:code}
+snippet src "add code block" b
+#+begin_src ${1:lisp}
+${2:code}
 #+end_src
 endsnippet
 
@@ -15,24 +15,33 @@ snippet title "title info" b
 #+DATE:		 ${4:[`!v strftime("%Y-%m-%d %a")`]}
 endsnippet
 
-snippet ic "inline code" w
-=${1:code}=$0 
+
+snippet '(\S*).tg' "add tag" ir
+:${1:${2:`!p snip.rv=match.group(1)`}}:
 endsnippet
 
-snippet xc "latex code" w
-\(${1:tex}\)$0
+snippet '(\S*).xc' "latex code" ir
+\(${1:`!p snip.rv=match.group(1)`}\) $0
 endsnippet
 
-snippet quote "quote block" b
+snippet '(\S*).cc' "inline code with reg" ir
+~${1:`!p snip.rv=match.group(1)`}~ $0
+endsnippet
+
+snippet link "add link from clipboard" w
+[[${1:`!v @+`}][${VISUAL:content}]]
+endsnippet
+
+snippet quo "quote block" b
 #+BEGIN_QUOTE
 $1
 #+END_QUOTE
 $0
 endsnippet
 
-snippet begin "begin block" b
-#+BEGIN_${1}
+snippet beg "begin block" b
+#+BEGIN_${1:COMMENT}
 ${2:content}
-#+END_${1}
+#+END_$1
 $0
 endsnippet
