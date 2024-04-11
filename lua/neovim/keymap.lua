@@ -39,8 +39,6 @@ local function add_delemitor(char)
 
 end
 
-vim.keymap.set({"n", "i"}, "<A-;>", function () add_delemitor(";") end, {})
-vim.keymap.set({"n", "i"}, "<A-,>", function () add_delemitor(",") end, {})
 
 
 -- place this in one of your configuration file(s)
@@ -66,7 +64,7 @@ vim.api.nvim_create_user_command(
 -- M: goto medium
 -- H: goto top
 --
-vim.keymap.set({"n", "v", "c"}, "<A-x>", ":", {})
+-- vim.keymap.set({"n", "v", "c"}, "<A-x>", ":", {})
 
 local native_map = {
 
@@ -82,13 +80,17 @@ local native_map = {
 
     ["n|<A-,>"] = map_cmd("A,<ESC>"),
 
-    ["c|<A-BS>"] = map_cmd("<C-w>"):with_nowait():with_not_silent(),
+    ["c,i|<A-BS>"] = map_cmd("<C-w>"):with_nowait():with_not_silent(),
 
     -- use system clipboard
     ["n|<leader>p"] = map_cmd([["+p]]),
     ["v|<leader>y"] = map_cmd([["+y]]),
     ["n|<leader>a"] = map_cmd([[ggVG]]),
     -- ["n|<C-a>"] = map_cmd([[ggVG]]),
+-- vim.keymap.set({"n", "i"}, "<A-;>", function () add_delemitor(";") end, {})
+-- vim.keymap.set({"n", "i"}, "<A-,>", function () add_delemitor(",") end, {})
+    ["n,i|<A-;>"] = map_func(function () add_delemitor(";") end),
+    ["n,i|<A-,>"] = map_func(function () add_delemitor(",") end),
 
     -- move when insert 
     ["i|<C-f>"] = map_cmd("<right>"),
@@ -106,8 +108,6 @@ local native_map = {
 
 
     -- ["i|<C-t><f-t>"] = map_cmd([[<C-r>=strftime("%Y-%m-%d")<CR>]]):with_nowait(),
-
-
     -- ["n|<leader>o"] = map_cmd("o<ESC>k"):with_nowait(),
     -- ["n|j"] = map_cmd("gj"):with_nowait(),
     -- ["n|k"] = map_cmd("gk"):with_nowait(),
@@ -167,14 +167,10 @@ local plugin_map = {
     ["n|<leader>nn"] = map_cr("NvimTreeToggle"),
     ["n|<Leader>nf"] = map_cr("NvimTreeFindFile"),
     ["n|<Leader>nr"] = map_cr("NvimTreeRefresh"),
-    ["n|sk"] = map_func(function () hop.hint_lines() end),
-    ["n|sl"] = map_func(function () hop.hint_lines_skip_whitespace() end),
-    ["v|sk"] = map_func(function () hop.hint_lines() end),
-    ["v|sl"] = map_func(function () hop.hint_lines_skip_whitespace() end),
-    ["n|sc"] = map_func(function () hop.hint_char1({ current_line_only = true }) end),
-    ["n|sw"] = map_func(function () hop.hint_words({ current_line_only = true }) end),
-    ["v|sc"] = map_func(function () hop.hint_char1({ current_line_only = true }) end),
-    ["v|sw"] = map_func(function () hop.hint_words({ current_line_only = true }) end),
+    ["n,v|sk"] = map_func(function () hop.hint_lines() end),
+    ["n,v|sl"] = map_func(function () hop.hint_lines_skip_whitespace() end),
+    ["n,v|sc"] = map_func(function () hop.hint_char1({ current_line_only = true }) end),
+    ["n,v|sw"] = map_func(function () hop.hint_words({ current_line_only = true }) end),
     -- ["n|sc"] = map_cu("HopWord"),
     -- Done: 在已经打开窗口的情况下, 可以切换目录
     -- ["n|<Leader>no"] = map_cmd(":NvimTreeOpenDir "),

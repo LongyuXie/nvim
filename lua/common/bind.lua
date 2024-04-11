@@ -79,6 +79,23 @@ function rhs_options:with_not_silent()
 end
 
 local pbind = {}
+local mode_set = "nvsxo!ilct"
+
+
+local function modeParser(mode)
+    local ret = {}
+    if mode == nil or mode == "" then
+        return ""
+    else 
+        for value in string.gmatch(mode, "([^,]+)") do
+            if #value == 1 and string.find(mode_set, value) then
+                ret[#ret+1] = value
+            end
+        end
+    end
+    if #ret == 1 then return ret[1] end
+    return ret
+end
 
 function pbind.map_cr(cmd_string)
 	local ro = rhs_options:new()
@@ -107,7 +124,8 @@ end
 
 function pbind.nvim_load_mapping(mapping)
 	for key, value in pairs(mapping) do
-		local mode, keymap = key:match("([^|]*)|?(.*)")
+		local modeStr, keymap = key:match("([^|]*)|?(.*)")
+        local mode = modeParser(modeStr)
 		if type(value) == "table" then
 			local rhs = value.cmd
 			local options = value.options
@@ -123,7 +141,8 @@ function pbind.nvim_load_mapping(mapping)
                 if (lua_function ~= nil) then
                     vim.keymap.set(mode, keymap, lua_function, options)
                 else 
-				    vim.api.nvim_set_keymap(mode, keymap, rhs, options)
+                    vim.keymap.set(mode, keymap, rhs, options)
+				    -- vim.api.nvim_set_keymap(mode, keymap, rhs, options)
                 end
 			end
 		end
