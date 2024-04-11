@@ -1,23 +1,24 @@
-
+local namespace = require("neovim.namespace")
 local bind = require("common.bind")
 
 local map_cr = bind.map_cr
 local map_cu = bind.map_cu
 local map_cmd = bind.map_cmd
 local map = vim.keymap
--- local api = require("nvim-tree.api")
+local map_func = bind.map_lua_function
 
--- print('hello')
+local telescope_builtin = require('telescope.builtin')
 
--- local function open_dir(path)
---     if api.tree.is_visible() then
---         -- 如果不是一个有效的目录, 则会切换到当前工作目录
---         api.tree.change_root(path)
---         api.tree.focus()
---     else
---         api.tree.open(path)
---     end
--- end
+local function nvim_tree_open_dir(path)
+    if api.tree.is_visible() then
+        -- 如果不是一个有效的目录, 则会切换到当前工作目录
+        api.tree.change_root(path)
+        api.tree.focus()
+    else
+        -- TODO: can not open dir corresponding path
+        api.tree.open(path)
+    end
+end
 
 local function add_new_line()
     local pos = vim.api.nvim_win_get_cursor(0)
@@ -27,84 +28,89 @@ local function add_new_line()
     )
 end
 
-vim.keymap.set("n", "<leader>j", add_new_line, {noremap = true})
 
-local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+local function add_delemitor(char) 
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    local current_line = vim.api.nvim_get_current_line()
+    local len = #current_line
+    vim.api.nvim_buf_set_text(
+        0, row-1, len, row-1, len, {char}
+    )
 
--- vim.api.nvim_create_user_command(
---     'NvimTreeOpenDir',
---     function(opts)
---         open_dir(opts.args)
---     end,
---     { nargs = 1, complete = 'file_in_path'}
--- )
--- vim.api.nvim_create_user_command("EditSnippets",
---     function()
---         require("luasnip.loaders").edit_snippet_files()
---     end,
---     {}
--- )
+end
 
--- vim.api.nvim_create_autocmd(
---     { "WinEnter" },
---     {
---         pattern = "*",
---         callback = function (...)
---             -- print("args is " .. vim.inspect(...))
---             number = vim.api.nvim_win_get_number(0)
---             -- print("number is " .. tostring(number))
---             tabpage = vim.api.nvim_win_get_tabpage(0)
---             -- print("tabpage is " .. tostring(tabpage))
---         end
---     }
---     -- pattern
--- )
+vim.keymap.set({"n", "i"}, "<A-;>", function () add_delemitor(";") end, {})
+vim.keymap.set({"n", "i"}, "<A-,>", function () add_delemitor(",") end, {})
+
+
+-- place this in one of your configuration file(s)
+local hop = require('hop')
+local directions = require('hop.hint').HintDirection
+-- vim.keymap.set('n', 'sw', function()
+-- end)
+-- vim.keymap.set('n', 'sc', function()
+-- end)
+
+vim.keymap.set("n", "<leader>o", add_new_line, {noremap = true})
+
+vim.api.nvim_create_user_command(
+    'MyOpenDir',
+    function(opts)
+        nvim_tree_open_dir(opts.args)
+    end,
+    { nargs = 1, complete = 'file_in_path'}
+)
 
 -- L: goto bottom
+
 -- M: goto medium
 -- H: goto top
+--
+vim.keymap.set({"n", "v", "c"}, "<A-x>", ":", {})
 
 local native_map = {
 
-    ["n|Q"] = map_cr("qa!"):with_silent():with_noremap(),
-    ["n|<leader>q"] = map_cr("quit"):with_noremap():with_silent(),
-    ["n|<leader>w"] = map_cr("write"):with_noremap():with_silent(),
+    ["n|Q"] = map_cr("qa!"),
+    ["n|<leader>q"] = map_cr("quit"),
+    ["n|<leader>w"] = map_cr("write"),
     -- window focus move
-    ["n|<A-h>"] = map_cmd("<C-w>h"):with_silent():with_noremap(),
-    ["n|<A-j>"] = map_cmd("<C-w>j"):with_silent():with_noremap(),
-    ["n|<A-k>"] = map_cmd("<C-w>k"):with_silent():with_noremap(),
-    ["n|<A-l>"] = map_cmd("<C-w>l"):with_silent():with_noremap(),
-    ["n|<A-o>"] = map_cr("only"):with_silent():with_noremap(),
+    ["n|<A-h>"] = map_cmd("<C-w>h"),
+    ["n|<A-j>"] = map_cmd("<C-w>j"),
+    ["n|<A-k>"] = map_cmd("<C-w>k"),
+    ["n|<A-l>"] = map_cmd("<C-w>l"),
+    ["n|<A-o>"] = map_cr("only"),
+
+    ["n|<A-,>"] = map_cmd("A,<ESC>"),
+
+    ["c|<A-BS>"] = map_cmd("<C-w>"):with_nowait():with_not_silent(),
 
     -- use system clipboard
-    ["n|<leader>p"] = map_cmd([["+p]]):with_noremap(),
-    ["v|<leader>y"] = map_cmd([["+y]]):with_noremap(),
-    ["n|<leader>a"] = map_cmd([[ggVG]]):with_noremap(),
-    -- ["n|<C-a>"] = map_cmd([[ggVG]]):with_noremap(),
+    ["n|<leader>p"] = map_cmd([["+p]]),
+    ["v|<leader>y"] = map_cmd([["+y]]),
+    ["n|<leader>a"] = map_cmd([[ggVG]]),
+    -- ["n|<C-a>"] = map_cmd([[ggVG]]),
 
     -- move when insert 
-    ["i|<C-f>"] = map_cmd("<right>"):with_silent():with_noremap(),
-    ["i|<C-b>"] = map_cmd("<left>"):with_silent():with_noremap(),
+    ["i|<C-f>"] = map_cmd("<right>"),
+    ["i|<C-b>"] = map_cmd("<left>"),
+    ["i|<C-p>"] = map_cmd("<up>"),
+    ["i|<C-n>"] = map_cmd("<down>"),
 
-    ["v|>"] = map_cmd(">gv"):with_silent():with_noremap():with_nowait(),
-    ["v|<"] = map_cmd("<gv"):with_silent():with_noremap():with_nowait(),
-
-    ["n|<C-k>"] = map_cu("move -2"):with_silent():with_noremap():with_nowait(),
-    ["n|<C-j>"] = map_cu("move +1"):with_silent():with_noremap():with_nowait(),
-    ["n|<C-l>"] = map_cu(">"):with_silent():with_noremap():with_nowait(),
-    ["n|<C-h>"] = map_cu("<"):with_silent():with_noremap():with_nowait(),
-
-
-    ["i|<C-t><f-t>"] = map_cmd([[<C-r>=strftime("%Y-%m-%d")<CR>]]):with_silent():with_noremap():with_nowait(),
+    ["n|<C-k>"] = map_cu("move -2"):with_nowait(),
+    ["n|<C-j>"] = map_cu("move +1"):with_nowait(),
+    ["n|<C-l>"] = map_cu(">"):with_nowait(),
+    ["n|<C-h>"] = map_cu("<"):with_nowait(),
+    ["v|<C-l>"] = map_cmd(">gv"):with_nowait(),
+    ["v|<C-h>"] = map_cmd("<gv"):with_nowait(),
 
 
-    -- ["n|<leader>o"] = map_cmd("o<ESC>k"):with_silent():with_noremap():with_nowait(),
-    -- ["n|j"] = map_cmd("gj"):with_silent():with_noremap():with_nowait(),
-    -- ["n|k"] = map_cmd("gk"):with_silent():with_noremap():with_nowait(),
+
+    -- ["i|<C-t><f-t>"] = map_cmd([[<C-r>=strftime("%Y-%m-%d")<CR>]]):with_nowait(),
+
+
+    -- ["n|<leader>o"] = map_cmd("o<ESC>k"):with_nowait(),
+    -- ["n|j"] = map_cmd("gj"):with_nowait(),
+    -- ["n|k"] = map_cmd("gk"):with_nowait(),
 }
 
 local plugin_map = {
@@ -115,18 +121,17 @@ local plugin_map = {
     -- zb: bottom
     -- <C-y>: line focus hold, but move up
     -- <C-e>: line foucs hold, but move down
-    -- Hop 
---     ["n|<leader><leader>w"] = map_cu("HopWord"):with_noremap(),
---     ["n|<leader><leader>j"] = map_cu("HopLine"):with_noremap(),
---     ["n|<leader><leader>k"] = map_cu("HopLine"):with_noremap(),
---     ["n|<leader><leader>c"] = map_cu("HopChar1"):with_noremap(),
---     ["n|<leader><leader>c"] = map_cu("HopChar2"):with_noremap(),
     
+    ["n|<leader>ff"] = map_func(telescope_builtin.find_files),
+    ["n|<leader>fg"] = map_func(telescope_builtin.live_grep),
+    ["n|<leader>fb"] = map_func(telescope_builtin.buffers),
+    ["n|<leader>fh"] = map_func(telescope_builtin.help_tags),
     
     -- It means use C-/
-    ["n|<C-_>"] = map_cmd("<Plug>(comment_toggle_linewise_current)"):with_silent():with_noremap(),
-    ["v|<C-_>"] = map_cmd("<Plug>(comment_toggle_linewise_visual)"):with_silent():with_noremap(),
-    ["i|<C-_>"] = map_cmd("<C-[><Plug>(comment_toggle_linewise_current)"):with_silent():with_noremap(),
+    -- 在终端中不能直接使用 C-/
+    ["n|<C-_>"] = map_cmd("<Plug>(comment_toggle_linewise_current)"),
+    ["v|<C-_>"] = map_cmd("<Plug>(comment_toggle_linewise_visual)"),
+    ["i|<C-_>"] = map_cmd("<C-[><Plug>(comment_toggle_linewise_current)"),
 
 
 
@@ -159,37 +164,37 @@ local plugin_map = {
     -- tsd: () <-> left(\right) <-> \big(\big)
 
     -- -- Plugin nvim-tree
-    ["n|<leader>nn"] = map_cr("NvimTreeToggle"):with_noremap():with_silent(),
-    ["n|<Leader>nf"] = map_cr("NvimTreeFindFile"):with_noremap():with_silent(),
-    ["n|<Leader>nr"] = map_cr("NvimTreeRefresh"):with_noremap():with_silent(),
-    ["n|sl"] = map_cu("HopLineStart"):with_noremap():with_silent(),
-    ["n|sk"] = map_cu("HopLine"):with_noremap():with_silent(),
-    -- ["n|sc"] = map_cu("HopWord"):with_noremap():with_silent(),
+    ["n|<leader>nn"] = map_cr("NvimTreeToggle"),
+    ["n|<Leader>nf"] = map_cr("NvimTreeFindFile"),
+    ["n|<Leader>nr"] = map_cr("NvimTreeRefresh"),
+    ["n|sk"] = map_func(function () hop.hint_lines() end),
+    ["n|sl"] = map_func(function () hop.hint_lines_skip_whitespace() end),
+    ["v|sk"] = map_func(function () hop.hint_lines() end),
+    ["v|sl"] = map_func(function () hop.hint_lines_skip_whitespace() end),
+    ["n|sc"] = map_func(function () hop.hint_char1({ current_line_only = true }) end),
+    ["n|sw"] = map_func(function () hop.hint_words({ current_line_only = true }) end),
+    ["v|sc"] = map_func(function () hop.hint_char1({ current_line_only = true }) end),
+    ["v|sw"] = map_func(function () hop.hint_words({ current_line_only = true }) end),
+    -- ["n|sc"] = map_cu("HopWord"),
     -- Done: 在已经打开窗口的情况下, 可以切换目录
-    -- ["n|<Leader>no"] = map_cmd(":NvimTreeOpenDir "):with_noremap(),
-    -- ["n|<Leader>ni"] = map_cmd(":NvimTreeOpenDir ./"):with_noremap(),
+    -- ["n|<Leader>no"] = map_cmd(":NvimTreeOpenDir "),
+    -- ["n|<Leader>ni"] = map_cmd(":NvimTreeOpenDir ./"),
 
     -- bufferline
-    -- ["n|<A-1>"] = map_cr("BufferLineGoToBuffer 1"):with_noremap():with_silent(),
-    -- ["n|<A-2>"] = map_cr("BufferLineGoToBuffer 2"):with_noremap():with_silent(),
-    -- ["n|<A-3>"] = map_cr("BufferLineGoToBuffer 3"):with_noremap():with_silent(),
-    -- ["n|<A-4>"] = map_cr("BufferLineGoToBuffer 4"):with_noremap():with_silent(),
-    -- ["n|<A-5>"] = map_cr("BufferLineGoToBuffer 5"):with_noremap():with_silent(),
-    -- ["n|<A-6>"] = map_cr("BufferLineGoToBuffer 6"):with_noremap():with_silent(),
-    -- ["n|<A-7>"] = map_cr("BufferLineGoToBuffer 7"):with_noremap():with_silent(),
-    -- ["n|<A-8>"] = map_cr("BufferLineGoToBuffer 8"):with_noremap():with_silent(),
-    -- ["n|<A-9>"] = map_cr("BufferLineGoToBuffer 9"):with_noremap():with_silent(),
+    -- ["n|<A-1>"] = map_cr("BufferLineGoToBuffer 1"),
+    -- ["n|<A-2>"] = map_cr("BufferLineGoToBuffer 2"),
+    -- ["n|<A-3>"] = map_cr("BufferLineGoToBuffer 3"),
+    -- ["n|<A-4>"] = map_cr("BufferLineGoToBuffer 4"),
+    -- ["n|<A-5>"] = map_cr("BufferLineGoToBuffer 5"),
+    -- ["n|<A-6>"] = map_cr("BufferLineGoToBuffer 6"),
+    -- ["n|<A-7>"] = map_cr("BufferLineGoToBuffer 7"),
+    -- ["n|<A-8>"] = map_cr("BufferLineGoToBuffer 8"),
+    -- ["n|<A-9>"] = map_cr("BufferLineGoToBuffer 9"),
 
-    ["n|<C-p>"] = map_cr("BufferLineCyclePrev"):with_noremap():with_silent(),
-    ["n|<C-n>"] = map_cr("BufferLineCycleNext"):with_noremap():with_silent(),
+    ["n|<C-p>"] = map_cr("BufferLineCyclePrev"),
+    ["n|<C-n>"] = map_cr("BufferLineCycleNext"),
 
-    -- -- Packer
-    -- ["n|<leader>ss"] = map_cr("PackerSync"):with_silent():with_noremap():with_nowait(),
-    -- ["n|<leader>su"] = map_cr("PackerUpdate"):with_silent():with_noremap():with_nowait(),
-    -- ["n|<leader>si"] = map_cr("PackerInstall"):with_silent():with_noremap():with_nowait(),
-    -- ["n|<leader>sc"] = map_cr("PackerClean"):with_silent():with_noremap():with_nowait(),
-
-    ["n|<leader>st"] = map_cr("Startify"):with_silent():with_noremap():with_nowait(),
+    -- ["n|<leader>st"] = map_cr("Startify"):with_nowait(),
 }
 
 bind.nvim_load_mapping(native_map)

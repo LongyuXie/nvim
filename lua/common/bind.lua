@@ -4,11 +4,12 @@ function rhs_options:new()
 	local instance = {
 		cmd = "",
 		options = {
-			noremap = false,
-			silent = false,
+			noremap = true,
+			silent = true,
 			expr = false,
 			nowait = false,
 		},
+        func = nil,
 		buffer = false,
 	}
 	setmetatable(instance, self)
@@ -19,6 +20,11 @@ end
 function rhs_options:map_cmd(cmd_string)
 	self.cmd = cmd_string
 	return self
+end
+
+function rhs_options:map_lua_function(func)
+    self.func = func
+    return self
 end
 
 function rhs_options:map_cr(cmd_string)
@@ -62,6 +68,16 @@ function rhs_options:with_buffer(num)
 	return self
 end
 
+function rhs_options:with_not_noremap()
+    self.options.noremap = false
+    return self
+end
+
+function rhs_options:with_not_silent()
+    self.options.silent = false
+    return self
+end
+
 local pbind = {}
 
 function pbind.map_cr(cmd_string)
@@ -84,6 +100,11 @@ function pbind.map_args(cmd_string)
 	return ro:map_args(cmd_string)
 end
 
+function pbind.map_lua_function(func) 
+    local ro = rhs_options:new()
+    return ro:map_lua_function(func)
+end
+
 function pbind.nvim_load_mapping(mapping)
 	for key, value in pairs(mapping) do
 		local mode, keymap = key:match("([^|]*)|?(.*)")
@@ -91,10 +112,19 @@ function pbind.nvim_load_mapping(mapping)
 			local rhs = value.cmd
 			local options = value.options
 			local buf = value.buffer
+            local lua_function = value.func
 			if buf then
-				vim.api.nvim_buf_set_keymap(buf, mode, keymap, rhs, options)
+                if (lua_function ~= nil) then
+                    vim.keymap.set(mode, keymap, lua_function, options)
+                else
+                    vim.api.nvim_buf_set_keymap(buf, mode, keymap, rhs, options)
+                end
 			else
-				vim.api.nvim_set_keymap(mode, keymap, rhs, options)
+                if (lua_function ~= nil) then
+                    vim.keymap.set(mode, keymap, lua_function, options)
+                else 
+				    vim.api.nvim_set_keymap(mode, keymap, rhs, options)
+                end
 			end
 		end
 	end

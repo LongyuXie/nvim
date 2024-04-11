@@ -1,12 +1,3 @@
--- place this in one of your configuration file(s)
-local hop = require('hop')
-local directions = require('hop.hint').HintDirection
-vim.keymap.set('n', 'sw', function()
-    hop.hint_words({ current_line_only = true })
-end)
-vim.keymap.set('n', 'sc', function()
-    hop.hint_char1({ current_line_only = true })
-end)
 
 local cmp = require('cmp')
 local cmp_ultisnips_mappings = require("cmp_nvim_ultisnips.mappings")
