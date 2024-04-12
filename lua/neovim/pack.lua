@@ -253,17 +253,6 @@ require("formatter").setup({
 
 -- Load treesitter grammar for org
 -- require("orgmode").setup_ts_grammar()
--- Setup orgmode
-require('orgmode').setup({
-    org_agenda_files = {'~/EmacsOrg/**/*', '~/notes/**/*'},
-    org_default_notes_file = '~/EmacsOrg/inbox.org',
-    mappings = {
-        org = {
-            org_toggle_checkbox = "<leader>ck"
-        },
-        org_return_uses_meta_return = true,
-    }
-})
 
 -- Setup treesitter
 require("nvim-treesitter.configs").setup({
