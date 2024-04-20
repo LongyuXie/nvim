@@ -9,12 +9,10 @@ local bracket_creator = require('nvim-autopairs.rules.basic').bracket_creator
 local textMarker = {"/", "_", "+", "~", "="}
 local markers = {}
 
-npairs.get_rules("'")[1].not_filetypes = { "scheme", "lisp" }
-npairs.get_rules("'")[1]:with_pair(cond.not_after_text("["))
-npairs.get_rules("(")[1]:with_pair(cond.not_before_text("\\"))
-npairs.get_rules("[")[1]:with_pair(cond.not_before_text("\\"))
-npairs.get_rules("{")[1]:with_pair(cond.not_before_text("\\"))
 
+npairs.setup {
+  enable_check_bracket_line = false
+}
 
 -- npairs.add_rule(Rule("*", "*"))
 -- Rule("*", "*")
@@ -22,12 +20,12 @@ local bracket = bracket_creator(npairs.config)
 for _, marker in ipairs(textMarker) do 
     markers[marker .. marker] = true
     npairs.add_rule (
-        bracket(marker, marker, {"org"})
+        bracket(marker, marker, {"org"}):with_pair(cond.before_text(' '))
     )
 end
 npairs.add_rules {
     bracket("\\(", "\\)", {"org"}),
-    bracket("(", ")")
+    -- bracket("(", ")")
 }
 -- print(vim.inspect(markers))
 
@@ -56,3 +54,9 @@ vim.api.nvim_create_autocmd("FileType", {
 -- for _,bracket in pairs { { '(', ')' }, { '[', ']' }, { '{', '}' } } do
 -- end
 
+npairs.get_rules("'")[1].not_filetypes = { "scheme", "lisp" }
+npairs.get_rules("'")[1]:with_pair(cond.not_after_text("["))
+npairs.get_rules("(")[1]:with_pair(cond.not_before_text("\\"))
+npairs.get_rules("[")[1]:with_pair(cond.not_before_text("\\"))
+npairs.get_rules("{")[1]:with_pair(cond.not_before_text("\\"))
+npairs.get_rules("/")[1]:with_pair(cond.not_before_regex('[-+]?[0-9]+[.]?[0-9]*', 10))
