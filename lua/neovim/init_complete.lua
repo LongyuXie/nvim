@@ -85,6 +85,10 @@ cmp.setup({
     },
 })
 
+-- IMPORTANT: make sure to setup neodev BEFORE lspconfig
+require("neodev").setup({
+  -- add any options here, or leave empty to use the default settings
+})
 
 require('java').setup()
 local lspconfig = require('lspconfig')
@@ -103,6 +107,10 @@ require('lspconfig')['jdtls'].setup {
         -- printed to the cmd
         ["$/progress"] = function(_, result, ctx) end,
     },
+}
+
+require('lspconfig')['lua_ls'].setup {
+    capabilities = capabilities,
 }
 
 local cmp_autopairs = require('nvim-autopairs.completion.cmp')

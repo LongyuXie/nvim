@@ -169,6 +169,7 @@ require("lazy").setup({
             require("neoconf").setup()
         end,
     },
+    { "folke/neodev.nvim", opts = {} },
     {
         "karb94/neoscroll.nvim",
         config = function()
@@ -262,5 +263,5 @@ require("nvim-treesitter.configs").setup({
     indent = {
         enable = false,
     },
-    ensure_installed = { "org", "java", "c", "cpp", "python", "lua" },
+    ensure_installed = { "org", "kotlin", "java", "c", "cpp", "python", "lua" },
 })
