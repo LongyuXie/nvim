@@ -8,28 +8,31 @@ ${2:code}
 #+end_src
 endsnippet
 
-snippet title "title info" b
+snippet meta "meta data" b
 #+TITLE:     ${1:`!p snip.rv=snip.fn.rsplit('.', 1)[0]`}
 #+AUTHOR:    ${2:谢龙玉}
 #+EMAIL:     ${3:1308963950@qq.com}
 #+DATE:		 ${4:[`!v strftime("%Y-%m-%d %a")`]}
 endsnippet
 
-
-snippet '(\S*).tg' "add tag" ir
-:${1:${2:`!p snip.rv=match.group(1)`}}:
+snippet '(\S*)\.t' "add tag" ir
+:${1:`!p snip.rv=match.group(1)`}:
 endsnippet
 
-snippet '(\S*).xc' "latex code" ir
+snippet '(\S*)\.l' "latex code" ir
 \(${1:`!p snip.rv=match.group(1)`}\) $0
 endsnippet
 
-snippet '(\S*).cc' "inline code with reg" ir
+snippet '(\S*)\.c' "inline code" ir
 ~${1:`!p snip.rv=match.group(1)`}~ $0
 endsnippet
 
-snippet link "add link from clipboard" w
-[[${1:`!v @+`}][${VISUAL:content}]]
+snippet '(\S*)\.cc' "inline code without confirm" ir
+~`!p snip.rv=match.group(1)`~ $0
+endsnippet
+
+snippet plink "add link from clipboard" w
+[[${1:`!v @+`}][${VISUAL:link content}]]
 endsnippet
 
 snippet quo "quote block" b
