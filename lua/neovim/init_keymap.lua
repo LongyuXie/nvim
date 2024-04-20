@@ -1,4 +1,3 @@
-local namespace = require("neovim.namespace")
 local bind = require("common.bind")
 
 local map_cr = bind.map_cr
@@ -49,7 +48,7 @@ local directions = require('hop.hint').HintDirection
 -- vim.keymap.set('n', 'sc', function()
 -- end)
 
-vim.keymap.set("n", "<leader>o", add_new_line, {noremap = true})
+vim.keymap.set("n", "<leader>o", add_new_line, {noremap = true, nowait=true})
 
 vim.api.nvim_create_user_command(
     'MyOpenDir',
@@ -78,8 +77,6 @@ local native_map = {
     ["n|<A-l>"] = map_cmd("<C-w>l"),
     ["n|<A-o>"] = map_cr("only"),
 
-    ["n|<A-,>"] = map_cmd("A,<ESC>"),
-
     ["c,i|<A-BS>"] = map_cmd("<C-w>"):with_nowait():with_not_silent(),
 
     -- use system clipboard
@@ -91,6 +88,8 @@ local native_map = {
 -- vim.keymap.set({"n", "i"}, "<A-,>", function () add_delemitor(",") end, {})
     ["n,i|<A-;>"] = map_func(function () add_delemitor(";") end),
     ["n,i|<A-,>"] = map_func(function () add_delemitor(",") end),
+
+    ["n,v|,"] = map_cmd(";"):with_nowait(),
 
     -- move when insert 
     ["i|<C-f>"] = map_cmd("<right>"),
@@ -105,12 +104,6 @@ local native_map = {
     ["v|<C-l>"] = map_cmd(">gv"):with_nowait(),
     ["v|<C-h>"] = map_cmd("<gv"):with_nowait(),
 
-
-
-    -- ["i|<C-t><f-t>"] = map_cmd([[<C-r>=strftime("%Y-%m-%d")<CR>]]):with_nowait(),
-    -- ["n|<leader>o"] = map_cmd("o<ESC>k"):with_nowait(),
-    -- ["n|j"] = map_cmd("gj"):with_nowait(),
-    -- ["n|k"] = map_cmd("gk"):with_nowait(),
 }
 
 local plugin_map = {
